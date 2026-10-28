@@ -1,2 +1,2 @@
 # NA-DASSI-
-NA DASSI te permet de présenter ton revenu , faire un bilan chiffré de tes dépenses , t’aider à voir ce que tu dépense et dans quel sources . Ellete permet également t’épargner . Dans ça en tenant compte de ton revenu 
+NA DASSI est une application conçue pour aider les utilisateurs à gérer efficacement leurs revenus, leurs dépenses et leur épargne. Elle permet de suivre son budget, d’analyser ses dépenses mensuelles, de fixer des objectifs financiers et de garder le contrôle sur son argent
