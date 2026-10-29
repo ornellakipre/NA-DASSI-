@@ -1,0 +1,1026 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-title" content="NA_DASSI">
+<meta name="theme-color" content="#B8512F">
+<meta name="color-scheme" content="light dark">
+<title>NA_DASSI</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout concept: grand bandeau terracotta avec le reste du mois, saisie rapide juste dessous, cartes à bords nets, 5 onglets en bas. Boutons orange. */
+:root {
+  --bg: #F3E9DC; --surface: #FBF6EE; --ink: #3B2417; --muted: #765A48; --line: #E0CFBA;
+  --primary: #B8512F; --on-primary: #FFFFFF;
+  --hero: #B8512F; --on-hero: #FFF8F0; --neg-hero: #FFE3B3;
+  --strip: #3B2417; --strip-ink: #F3E9DC;
+  --accent: #6B3A22;
+  --good: #4F6B2A; --on-good: #FFFFFF;
+  --danger: #A4161A; --on-danger: #FFFFFF;
+  --ochre: #E2A24A; --on-ochre: #3B2417;
+  --tint: #EBDCC6;
+  --c-besoins: #6B4A32; --c-envies: #C9822B; --c-epargne: #4F6B2A;
+  --font-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #231710; --surface: #2F2016; --ink: #F3E9DC; --muted: #C7AE98; --line: #4A3526;
+    --primary: #E0805A; --on-primary: #2A1208;
+    --strip: #1A0F09; --strip-ink: #F3E9DC;
+    --accent: #F0C8A0;
+    --good: #A8C77A; --on-good: #1F2A0E; --danger: #FF8A80; --on-danger: #2A0806;
+    --tint: #4A3526;
+    --c-besoins: #C9A27E; --c-envies: #E2A24A; --c-epargne: #A8C77A;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #231710; --surface: #2F2016; --ink: #F3E9DC; --muted: #C7AE98; --line: #4A3526;
+  --primary: #E0805A; --on-primary: #2A1208;
+  --strip: #1A0F09; --strip-ink: #F3E9DC;
+  --accent: #F0C8A0;
+  --good: #A8C77A; --on-good: #1F2A0E; --danger: #FF8A80; --on-danger: #2A0806;
+  --tint: #4A3526;
+  --c-besoins: #C9A27E; --c-envies: #E2A24A; --c-epargne: #A8C77A;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; padding-top: env(safe-area-inset-top, 0px); }
+html, body { margin: 0; }
+[hidden] { display: none !important; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.45;
+  overflow-x: hidden;
+  padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 96px;
+}
+.wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; padding-top: 16px; }
+h1, h2, h3 { font-family: var(--font-display); margin: 0; text-wrap: balance; }
+h2 { font-size: 1.2rem; font-weight: 800; }
+h3 { font-size: 1rem; font-weight: 700; }
+p { margin: 0; }
+.muted { color: var(--muted); }
+.small { font-size: 0.85rem; }
+.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* header band */
+.top { background: var(--hero); color: var(--on-hero); border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.top-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 1.25rem; letter-spacing: 0.01em; }
+.month { display: flex; align-items: center; gap: 4px; }
+.month span { min-width: 7.5em; text-align: center; font-weight: 700; text-transform: capitalize; }
+.icon-btn { background: transparent; color: inherit; border: 2px solid currentColor; border-radius: 12px; width: 40px; height: 40px; font-size: 1.2rem; cursor: pointer; }
+.label-up { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
+.big { font-family: var(--font-display); font-weight: 800; font-size: clamp(2.2rem, 11vw, 3.1rem); line-height: 1.05; }
+.big.neg { color: var(--neg-hero); }
+.top-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(105px, 1fr)); gap: 10px 16px; background: var(--strip); color: var(--strip-ink); border-radius: 16px; padding: 12px 14px; }
+.top-stats b { display: block; font-size: 0.98rem; }
+.top-note { font-size: 0.82rem; font-weight: 600; }
+
+/* cards */
+.card { background: var(--surface); border: 2px solid var(--line); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.notice { background: var(--tint); border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; font-size: 0.92rem; }
+.alert { border: 2px solid var(--danger); background: var(--surface); border-radius: 14px; padding: 10px 12px; font-size: 0.92rem; }
+.alert.warn { border-color: var(--primary); }
+
+/* split bar and rows */
+.split { display: flex; height: 14px; border-radius: 99px; overflow: hidden; background: var(--line); }
+.split i { display: block; height: 100%; }
+.post { display: flex; flex-direction: column; gap: 6px; }
+.post-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+.bar { height: 12px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.bar > span { display: block; height: 100%; border-radius: 99px; background: var(--c); }
+.bar.over > span { background: var(--danger); }
+@media (prefers-reduced-motion: no-preference) { .bar > span { transition: width 0.35s ease; } }
+
+/* lists */
+.list { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.item { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; padding: 12px 0; border-top: 1px solid var(--line); }
+.item:first-child { border-top: 0; padding-top: 0; }
+.item:last-child { padding-bottom: 0; }
+.item-main { min-width: 0; flex: 1 1 150px; display: flex; flex-direction: column; gap: 2px; }
+.item-main b { overflow-wrap: anywhere; }
+.item-main .num { white-space: normal; }
+.item-side { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.pill { font-size: 0.78rem; font-weight: 800; padding: 3px 10px; border-radius: 99px; background: var(--tint); color: var(--ink); white-space: nowrap; }
+.pill.paid { background: var(--good); color: var(--on-good); }
+.pill.late { background: var(--danger); color: var(--on-danger); }
+.pill.soon { background: var(--ochre); color: var(--on-ochre); }
+
+/* forms */
+form, .fields { display: flex; flex-direction: column; gap: 10px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+label { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; font-weight: 700; color: var(--muted); min-width: 0; }
+input, select { font: inherit; font-size: 16px; color: var(--ink); background: var(--bg); border: 2px solid var(--line); border-radius: 12px; padding: 10px 12px; min-height: 46px; width: 100%; min-width: 0; }
+input:focus-visible, select:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.btn { font: inherit; font-weight: 800; min-height: 46px; padding: 0 18px; border-radius: 12px; border: 0; background: var(--primary); color: var(--on-primary); cursor: pointer; }
+.btn.big { width: 100%; min-height: 52px; font-size: 1.05rem; }
+.btn.ghost { background: transparent; color: var(--ink); border: 2px solid var(--line); }
+.btn.small { min-height: 38px; padding: 0 12px; font-size: 0.88rem; }
+.btn.danger { background: transparent; color: var(--danger); border: 2px solid var(--line); }
+.msg { color: var(--danger); font-size: 0.88rem; font-weight: 600; }
+.msg:empty { display: none; }
+.msg.ok { color: var(--good); font-weight: 700; }
+.row-inline { display: flex; gap: 8px; align-items: stretch; flex-wrap: wrap; }
+.row-inline input { flex: 1 1 120px; }
+.seg { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.logo { font-style: italic; font-weight: 800; letter-spacing: 0.02em; }
+.hello-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 40px; }
+.bell { position: relative; flex: none; display: grid; place-items: center; }
+.bell svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.badge { position: absolute; top: -8px; right: -8px; min-width: 22px; height: 22px; padding: 0 5px; border-radius: 99px; background: var(--strip); color: var(--strip-ink); font-size: 0.74rem; font-weight: 800; display: grid; place-items: center; border: 2px solid var(--hero); }
+
+/* page d'accueil et inscription */
+.gate { min-height: 100%; }
+.gate-title { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.7rem, 8vw, 2.4rem); line-height: 1.12; margin: 0; text-wrap: balance; overflow-wrap: anywhere; }
+.gate-sub { font-size: 1rem; font-weight: 600; }
+.perks { list-style: none; margin: 0; padding: 12px 14px; background: var(--strip); color: var(--strip-ink); border-radius: 16px; display: flex; flex-direction: column; gap: 8px; font-weight: 600; font-size: 0.95rem; }
+.perks li { display: flex; gap: 10px; align-items: baseline; }
+.perks li::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--ochre); transform: translateY(-1px); }
+.hello { font-weight: 700; font-size: 0.95rem; overflow-wrap: anywhere; }
+.profile-line { display: flex; flex-direction: column; gap: 2px; overflow-wrap: anywhere; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; text-align: center; text-decoration: none; }
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; counter-reset: st; }
+.steps li { counter-increment: st; display: flex; gap: 12px; align-items: flex-start; min-width: 0; }
+.steps li::before { content: counter(st); flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: var(--on-primary); font-weight: 800; display: grid; place-items: center; }
+.steps .st-body { display: flex; flex-direction: column; gap: 8px; min-width: 0; flex: 1; }
+.pay-num { font-family: var(--font-display); font-weight: 800; font-size: 1.3rem; overflow-wrap: anywhere; }
+textarea { font: inherit; font-size: 16px; color: var(--ink); background: var(--bg); border: 2px solid var(--line); border-radius: 12px; padding: 10px 12px; width: 100%; min-width: 0; min-height: 90px; resize: vertical; }
+
+/* bilan */
+.streak { background: var(--tint); border-radius: 14px; padding: 10px 12px; font-size: 0.92rem; }
+.mrow { display: flex; flex-direction: column; gap: 6px; }
+.mrow-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.mrow-top b { text-transform: capitalize; }
+
+/* bottom nav */
+.nav { position: fixed; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 2px solid var(--line); display: flex; justify-content: center; padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); z-index: 5; }
+.nav-in { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px; width: 100%; max-width: 560px; }
+.tab { font: inherit; font-size: 0.7rem; font-weight: 700; background: transparent; border: 0; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0; border-radius: 12px; cursor: pointer; min-height: 50px; }
+.tab svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tab[aria-current="page"] { color: var(--on-hero); background: var(--hero); }
+.foot { text-align: center; font-size: 0.8rem; color: var(--muted); padding: 4px 0; }
+</style>
+
+</head>
+<body>
+<div class="wrap gate" id="gate" hidden></div>
+
+<div class="wrap" id="app">
+  <header class="top">
+    <div class="top-row">
+      <div class="brand logo">NA_DASSI</div>
+      <div class="month">
+        <button class="icon-btn" data-act="prev" aria-label="Mois précédent">&#8249;</button>
+        <span id="month-label"></span>
+        <button class="icon-btn" data-act="next" aria-label="Mois suivant">&#8250;</button>
+      </div>
+    </div>
+    <div class="hello-row"><p class="hello" id="hello"></p>
+      <button class="icon-btn bell" data-act="bell" id="bell" aria-label="Rappels" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9zM10 20a2 2 0 0 0 4 0"/></svg><span class="badge" id="bell-badge" hidden></span></button></div>
+    <div>
+      <div class="label-up" id="hero-label">Reste ce mois-ci</div>
+      <div class="big num" id="hero-left"></div>
+    </div>
+    <div class="top-stats">
+      <div><span class="label-up">Revenu</span><b class="num" id="hero-income"></b></div>
+      <div><span class="label-up">Sorti</span><b class="num" id="hero-spent"></b></div>
+      <div><span class="label-up">Mis de côté</span><b class="num" id="hero-saved"></b></div>
+    </div>
+    <p class="top-note" id="mode-note" role="status"></p>
+  </header>
+  <div id="sample-note"></div>
+  <main id="view" class="wrap" style="padding-top:0"></main>
+  <p class="foot">NA_DASSI · version de test</p>
+</div>
+
+<nav class="nav" aria-label="Sections">
+  <div class="nav-in">
+    <button class="tab" data-tab="apercu"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Accueil</button>
+    <button class="tab" data-tab="depenses"><svg viewBox="0 0 24 24"><path d="M3 7h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM3 7l2-3h12l1 3M16 13.5h3"/></svg>Dépenses</button>
+    <button class="tab" data-tab="echeances"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Agenda</button>
+    <button class="tab" data-tab="epargne"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 9.5c0-1 1.3-1.8 3-1.8s3 .8 3 1.8-1.3 1.6-3 2-3 1-3 2 1.3 1.8 3 1.8 3-.8 3-1.8"/></svg>Épargne</button>
+    <button class="tab" data-tab="plus"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>Plus</button>
+  </div>
+</nav>
+
+<script src="config.js"></script>
+<script>
+(function () {
+  var LS = "mon-budget-v1";
+  var CATS = {
+    loyer: { label: "Loyer", g: "besoins" },
+    alim: { label: "Alimentation", g: "besoins" },
+    transport: { label: "Transport", g: "besoins" },
+    factures: { label: "Factures (CIE, eau, internet)", g: "besoins" },
+    sante: { label: "Santé", g: "besoins" },
+    sorties: { label: "Sorties et restos", g: "envies" },
+    loisirs: { label: "Loisirs", g: "envies" },
+    shopping: { label: "Shopping", g: "envies" },
+    epargne: { label: "Épargne", g: "epargne" }
+  };
+  var GROUPS = {
+    besoins: { label: "Besoins", sub: "loyer, nourriture, transport, factures", color: "var(--c-besoins)" },
+    envies: { label: "Envies", sub: "sorties, loisirs, shopping", color: "var(--c-envies)" },
+    epargne: { label: "Épargne", sub: "ce que tu mets de côté", color: "var(--c-epargne)" }
+  };
+
+  /* ---------- helpers ---------- */
+  var pad = function (n) { return String(n).padStart(2, "0"); };
+  var ymd = function (d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); };
+  var today = new Date(); today.setHours(0, 0, 0, 0);
+  var nf = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
+  var money = function (n) { return nf.format(Math.round(n || 0)) + " FCFA"; };
+  var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var uid = function () { return Math.random().toString(36).slice(2, 9); };
+  var daysIn = function (y, m) { return new Date(y, m, 0).getDate(); };
+  var $ = function (s) { return document.querySelector(s); };
+
+  /* ---------- state ---------- */
+  function sampleState() {
+    var ym = ymd(today).slice(0, 7);
+    var y = today.getFullYear(), m = today.getMonth() + 1, td = today.getDate();
+    var day = function (n) { return ym + "-" + pad(Math.min(n, td)); };
+    var loyerId = uid(), cieId = uid(), eauId = uid(), netId = uid();
+    var goalDate = new Date(y, today.getMonth() + 4, Math.min(td, 28));
+    var s = {
+      v: 1, sample: true, theme: "auto", income: 250000, incomeFreq: "month",
+      catBudgets: { alim: 40000, transport: 15000, sorties: 20000 },
+      split: { besoins: 50, envies: 30, epargne: 20 },
+      dues: [
+        { id: loyerId, label: "Loyer", amount: 75000, day: 5, cat: "loyer" },
+        { id: netId, label: "Internet", amount: 20000, day: 10, cat: "factures" },
+        { id: cieId, label: "Électricité (CIE)", amount: 12000, day: 15, cat: "factures" },
+        { id: eauId, label: "Eau (SODECI)", amount: 5000, day: 20, cat: "factures" }
+      ],
+      expenses: [
+        { id: uid(), label: "Courses du marché", amount: 18000, cat: "alim", date: day(2) },
+        { id: uid(), label: "Taxi et woro-woro", amount: 6500, cat: "transport", date: day(3) },
+        { id: uid(), label: "Sortie avec les amis", amount: 9000, cat: "sorties", date: day(4) }
+      ],
+      goals: [
+        { id: uid(), label: "Nouveau téléphone", target: 150000, saved: 30000, date: ymd(goalDate) }
+      ]
+    };
+    var pd = new Date(y, today.getMonth() - 1, 1), pym = pd.getFullYear() + "-" + pad(pd.getMonth() + 1);
+    s.expenses.push(
+      { id: uid(), label: "Courses du mois", amount: 52000, cat: "alim", date: pym + "-12" },
+      { id: uid(), label: "Transport", amount: 14000, cat: "transport", date: pym + "-15" },
+      { id: uid(), label: "Loisirs", amount: 16000, cat: "loisirs", date: pym + "-20" },
+      { id: uid(), label: "Épargne du mois", amount: 40000, cat: "epargne", date: pym + "-25" }
+    );
+    if (td >= 5) s.expenses.push({ id: uid(), label: "Loyer", amount: 75000, cat: "loyer", date: day(5), dueId: loyerId });
+    return s;
+  }
+  var state = sampleState();
+  var viewMonth = ymd(today).slice(0, 7);
+  var tab = "apercu", payOpen = false, confirmReset = false, gateStep = "welcome", editingProfile = false, bellOpen = false;
+
+  /* ---------- persistence (téléphone uniquement) ---------- */
+  var memoryOnly = false, ready = true, dirty = false;
+  function persist() {
+    dirty = true;
+    try { localStorage.setItem(LS, JSON.stringify(state)); memoryOnly = false; }
+    catch (e) { memoryOnly = true; }
+    var d = new Date();
+    $("#mode-note").textContent = memoryOnly
+      ? "Impossible d\u2019enregistrer sur cet appareil (navigation privée ?). Les données seront perdues à la fermeture."
+      : "Enregistré sur ton téléphone à " + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ".";
+  }
+  function modeNote() { $("#mode-note").textContent = "Tes données restent sur ton téléphone."; }
+
+  /* ---------- computations ---------- */
+  function monthExpenses() { return state.expenses.filter(function (e) { return e.date.slice(0, 7) === viewMonth; }); }
+  function groupSpent() {
+    var r = { besoins: 0, envies: 0, epargne: 0 };
+    monthExpenses().forEach(function (e) { var g = (CATS[e.cat] || { g: "envies" }).g; r[g] += e.amount; });
+    return r;
+  }
+  var WEEKS = 52 / 12;
+  function monthlyIncome() { var i = state.income || 0; return state.incomeFreq === "week" ? i * WEEKS : i; }
+  function budgetOf(g) { return monthlyIncome() * (state.split[g] || 0) / 100; }
+  function weekBounds() {
+    var d = new Date(today), dow = (d.getDay() + 6) % 7;
+    var start = new Date(d.getFullYear(), d.getMonth(), d.getDate() - dow);
+    var end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 6);
+    return { start: ymd(start), end: ymd(end) };
+  }
+  function weekSpent() {
+    var w = weekBounds();
+    return state.expenses.filter(function (e) { return e.cat !== "epargne" && e.date >= w.start && e.date <= w.end; }).reduce(function (a, e) { return a + e.amount; }, 0);
+  }
+  function weeklyAllowance() { return monthlyIncome() * ((state.split.besoins || 0) + (state.split.envies || 0)) / 100 / WEEKS; }
+  function dueInfo(d, ym) {
+    ym = ym || viewMonth;
+    var p = ym.split("-").map(Number);
+    var dt = new Date(p[0], p[1] - 1, Math.min(d.day, daysIn(p[0], p[1])));
+    var paid = state.expenses.some(function (e) { return e.dueId === d.id && e.date.slice(0, 7) === ym; });
+    return { dt: dt, paid: paid, diff: Math.round((dt - today) / 864e5) };
+  }
+  function monthLabel() {
+    var p = viewMonth.split("-").map(Number);
+    return new Date(p[0], p[1] - 1, 1).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+  }
+  function newExpenseDate() {
+    var p = viewMonth.split("-").map(Number);
+    if (viewMonth === ymd(today).slice(0, 7)) return ymd(today);
+    return viewMonth + "-" + pad(Math.min(today.getDate(), daysIn(p[0], p[1])));
+  }
+  function dateFr(s) {
+    var p = s.split("-").map(Number);
+    return new Date(p[0], p[1] - 1, p[2]).toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+  }
+  function catOptions(sel) {
+    return Object.keys(CATS).map(function (k) { return '<option value="' + k + '"' + (k === sel ? " selected" : "") + ">" + esc(CATS[k].label) + "</option>"; }).join("");
+  }
+  function duePill(info) {
+    if (info.paid) return '<span class="pill paid">Payé</span>';
+    if (info.diff < 0) return '<span class="pill late">En retard de ' + (-info.diff) + " j</span>";
+    if (info.diff === 0) return '<span class="pill soon">Aujourd’hui</span>';
+    if (info.diff === 1) return '<span class="pill soon">Demain</span>';
+    if (info.diff <= 3) return '<span class="pill soon">Dans ' + info.diff + " j</span>";
+    return '<span class="pill">Dans ' + info.diff + " j</span>";
+  }
+
+  function catSpent(k) {
+    return monthExpenses().filter(function (e) { return e.cat === k; }).reduce(function (a, e) { return a + e.amount; }, 0);
+  }
+  function catAlerts() {
+    var cb = state.catBudgets || {};
+    return Object.keys(cb).filter(function (k) { return CATS[k] && k !== "epargne" && cb[k] > 0; }).map(function (k) {
+      var s = catSpent(k), b = cb[k];
+      if (s > b) return '<div class="alert"><b>' + esc(CATS[k].label) + "</b> : budget dépassé de " + money(s - b) + ".</div>";
+      if (s >= b * 0.8) return '<div class="alert warn"><b>' + esc(CATS[k].label) + "</b> : " + Math.round(s / b * 100) + " % du budget utilisé. Il reste " + money(b - s) + ".</div>";
+      return "";
+    }).join("");
+  }
+  function viewBudgets() {
+    var cb = state.catBudgets || {};
+    var rows = Object.keys(CATS).filter(function (k) { return k !== "epargne"; }).map(function (k) {
+      var b = cb[k] || 0, s = catSpent(k);
+      var pct = b > 0 ? Math.min(100, s / b * 100) : 0, over = b > 0 && s > b;
+      return '<div class="post"><div class="post-top"><label style="flex:1 1 150px">' + esc(CATS[k].label) + '<input id="cb-' + k + '" name="cb-' + k + '" type="number" inputmode="numeric" min="0" step="1" value="' + (b || "") + '" placeholder="Budget en FCFA"></label><span class="small muted num">' + (b > 0 ? money(s) + " / " + money(b) : money(s) + " dépensés") + "</span></div>" +
+        (b > 0 ? '<div class="bar' + (over ? " over" : "") + '" style="--c:' + GROUPS[CATS[k].g].color + '"><span style="width:' + pct.toFixed(1) + '%"></span></div>' : "") + "</div>";
+    }).join("");
+    return '<section class="card"><div class="card-head"><h2>Budget par catégorie</h2><span class="small muted">Par mois. Laisse vide pour ne pas fixer de limite</span></div><form data-form="budgets" novalidate>' + rows + '<p class="msg ok" role="status" id="ok-budgets"></p><button class="btn" type="submit">Enregistrer les budgets</button></form></section>';
+  }
+
+  function emptyState() {
+    return { v: 1, sample: false, trialStart: (state && state.trialStart) || null, sub: (state && state.sub) || null, profile: (state && state.profile) || null, theme: (state && state.theme) || "auto", income: 0, incomeFreq: "month", catBudgets: {}, split: { besoins: 50, envies: 30, epargne: 20 }, expenses: [], dues: [], goals: [] };
+  }
+  function applyTheme() {
+    var t = state.theme;
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+    else document.documentElement.removeAttribute("data-theme");
+  }
+
+  /* ---------- views ---------- */
+  function renderHero() {
+    applyTheme();
+    var gs = groupSpent();
+    var spent = gs.besoins + gs.envies + gs.epargne;
+    var left = monthlyIncome() - spent;
+    $("#month-label").textContent = monthLabel();
+    $("#hello").textContent = state.profile && state.profile.first ? "Bonjour, " + state.profile.first : "";
+    var nrem = reminders().length, badge = $("#bell-badge");
+    badge.hidden = nrem === 0;
+    badge.textContent = nrem > 9 ? "9+" : String(nrem);
+    $("#bell").setAttribute("aria-label", nrem ? "Rappels : " + nrem + " paiement(s) à faire" : "Rappels");
+    $("#bell").setAttribute("aria-expanded", bellOpen ? "true" : "false");
+    var hl = $("#hero-left");
+    hl.textContent = money(Math.abs(left));
+    hl.className = "big num" + (left < 0 ? " neg" : "");
+    $("#hero-label").textContent = left < 0 ? "Tu dépasses ton revenu de" : "Reste ce mois-ci";
+    $("#hero-income").textContent = (state.incomeFreq === "week" ? "≈ " : "") + money(monthlyIncome());
+    $("#hero-spent").textContent = money(gs.besoins + gs.envies);
+    $("#hero-saved").textContent = money(gs.epargne);
+    $("#sample-note").innerHTML = state.sample
+      ? '<div class="notice"><p><b>Ce sont des chiffres d’exemple.</b> Modifie-les pour voir comment ça marche, puis repars de zéro quand tu es prêt.</p><div><button class="btn small" data-act="clear-sample">Commencer avec mes données</button></div></div>'
+      : "";
+    document.querySelectorAll(".tab").forEach(function (b) {
+      if (b.dataset.tab === tab) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
+    });
+  }
+
+  function weekCard() {
+    var allow = weeklyAllowance(), sp = weekSpent();
+    var pct = allow > 0 ? Math.min(100, sp / allow * 100) : 0, over = sp > allow;
+    var w = weekBounds();
+    return '<section class="card"><div class="card-head"><h2>Cette semaine</h2><span class="small muted">' + dateFr(w.start) + " au " + dateFr(w.end) + '</span></div>' +
+      '<div class="bar' + (over ? " over" : "") + '" style="--c:var(--c-besoins)"><span style="width:' + pct.toFixed(1) + '%"></span></div>' +
+      '<p class="small">' + money(sp) + " dépensés sur " + money(allow) + " prévus. " + (over ? "Tu dépasses de " + money(sp - allow) + "." : "Il te reste <b>" + money(allow - sp) + "</b>.") + "</p></section>";
+  }
+
+  /* ---------- rappels (cloche) ---------- */
+  function reminders() {
+    var ym = ymd(today).slice(0, 7);
+    return state.dues.map(function (d) { return { d: d, i: dueInfo(d, ym) }; })
+      .filter(function (x) { return !x.i.paid && x.i.diff <= 3; })
+      .sort(function (a, b) { return a.i.diff - b.i.diff; });
+  }
+  function bellPanel() {
+    var r = reminders();
+    var list = r.length
+      ? '<ul class="list">' + r.map(function (x) {
+        return '<li class="item"><div class="item-main"><b>' + esc(x.d.label) + '</b><span class="small muted num">Le ' + x.d.day + " du mois · " + money(x.d.amount) + '</span></div><div class="item-side">' + duePill(x.i) + '<button class="btn small" data-act="pay" data-id="' + x.d.id + '">Marquer payé</button></div></li>';
+      }).join("") + "</ul>"
+      : '<p class="muted">Rien à payer dans les 3 prochains jours. Tout est à jour.</p>';
+    return '<section class="card" id="bell-panel"><div class="card-head"><h2>Rappels</h2><button class="btn ghost small" data-act="bell">Fermer</button></div>' + list +
+      '<div class="notice"><p>Pour être prévenu même quand l’application est fermée, ajoute tes échéances à ton calendrier. Ton téléphone t’enverra une notification la veille à 9 h et le jour même à 8 h.</p><div><button class="btn small" data-act="ics">Ajouter mes rappels au calendrier</button></div><p class="msg ok" role="status" id="ok-ics"></p></div></section>';
+  }
+  function icsEscape(t) { return String(t).replace(/\\/g, "\\\\").replace(/;/g, "\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n"); }
+  function icsDate(d) { return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()); }
+  function buildIcs() {
+    var n = new Date();
+    var stamp = n.getUTCFullYear() + pad(n.getUTCMonth() + 1) + pad(n.getUTCDate()) + "T" + pad(n.getUTCHours()) + pad(n.getUTCMinutes()) + pad(n.getUTCSeconds()) + "Z";
+    var L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//NA_DASSI//FR", "CALSCALE:GREGORIAN", "METHOD:PUBLISH"];
+    state.dues.forEach(function (d) {
+      var y = today.getFullYear(), m = today.getMonth();
+      var pick = function (yy, mm) { var dim = daysIn(yy, mm + 1); return new Date(yy, mm, d.day > 28 ? dim : d.day); };
+      var start = pick(y, m);
+      if (start < today) start = pick(y, m + 1);
+      var rule = d.day > 28 ? "FREQ=MONTHLY;BYMONTHDAY=28,29,30,31;BYSETPOS=-1" : "FREQ=MONTHLY;BYMONTHDAY=" + d.day;
+      var title = "Payer : " + d.label + " (" + money(d.amount).replace(/\u202f|\u00a0/g, " ") + ")";
+      L.push("BEGIN:VEVENT", "UID:" + d.id + "@na-dassi", "DTSTAMP:" + stamp, "DTSTART;VALUE=DATE:" + icsDate(start), "RRULE:" + rule,
+        "SUMMARY:" + icsEscape(title), "DESCRIPTION:" + icsEscape("Rappel NA_DASSI"),
+        "BEGIN:VALARM", "TRIGGER:-PT15H", "ACTION:DISPLAY", "DESCRIPTION:" + icsEscape(title), "END:VALARM",
+        "BEGIN:VALARM", "TRIGGER:PT8H", "ACTION:DISPLAY", "DESCRIPTION:" + icsEscape(title), "END:VALARM",
+        "END:VEVENT");
+    });
+    L.push("END:VCALENDAR");
+    return L.join("\r\n") + "\r\n";
+  }
+  function downloadIcs() {
+    if (!state.dues.length) { flashOk("ics", "Ajoute d’abord une échéance dans l’onglet Agenda."); return; }
+    try {
+      var blob = new Blob([buildIcs()], { type: "text/calendar;charset=utf-8" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url; a.download = "na-dassi-rappels.ics";
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 15000);
+      flashOk("ics", "Fichier prêt. Ouvre-le pour l’ajouter à ton calendrier.");
+    } catch (e) { flashOk("ics", "Impossible de créer le fichier sur cet appareil."); }
+  }
+
+  /* ---------- essai gratuit et abonnement ---------- */
+  var CFG = window.NA_DASSI_CONFIG || {};
+  var TRIAL_DAYS = Number(CFG.trialDays) > 0 ? Number(CFG.trialDays) : 21;
+  function billingOn() { return Number(CFG.priceFcfa) > 0 && !!CFG.payNumber && !!CFG.publicKey; }
+  function parseYmd(t) { var p = String(t).split("-").map(Number); return new Date(p[0], p[1] - 1, p[2]); }
+  function addDays(d, n) { return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); }
+  function addMonths(d, n) { var m = d.getMonth() + n; var y = d.getFullYear() + Math.floor(m / 12); m = ((m % 12) + 12) % 12; return new Date(y, m, Math.min(d.getDate(), daysIn(y, m + 1))); }
+  function trialLeft() {
+    var start = state.trialStart ? parseYmd(state.trialStart) : today;
+    var used = Math.round((today - start) / 864e5);
+    return Math.max(0, TRIAL_DAYS - used);
+  }
+  function subLeft() {
+    if (!state.sub || !state.sub.until) return 0;
+    return Math.round((parseYmd(state.sub.until) - today) / 864e5) + 1;
+  }
+  function subActive() { return subLeft() > 0; }
+  function hasAccess() { return !billingOn() || subActive() || trialLeft() > 0; }
+  function untilFr(t) { return parseYmd(t).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }); }
+
+  function b64urlToBytes(str) {
+    var t = String(str).replace(/\s/g, "").replace(/-/g, "+").replace(/_/g, "/");
+    while (t.length % 4) t += "=";
+    var bin = atob(t), out = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+  function phoneDigits(phone) {
+    var d = String(phone || "").replace(/\D/g, "");
+    if (d.indexOf("00225") === 0) d = d.slice(5);
+    else if (d.indexOf("225") === 0 && d.length > 10) d = d.slice(3);
+    return d.slice(-10);
+  }
+  function phoneHash(phone) {
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode("na_dassi|" + phoneDigits(phone))).then(function (h) { return new Uint8Array(h).slice(0, 6); });
+  }
+  function hex(bytes) { return Array.prototype.map.call(bytes, function (b) { return pad(b.toString(16)); }).join(""); }
+
+  function verifyCode(raw) {
+    var fail = function (m) { return Promise.resolve({ err: m }); };
+    if (!window.crypto || !crypto.subtle) return fail("Ton navigateur ne peut pas vérifier le code. Ouvre le site avec Safari ou Chrome.");
+    var txt = String(raw || "").trim();
+    if (!txt) return fail("Colle ton code d’activation.");
+    var bytes;
+    try { bytes = b64urlToBytes(txt); } catch (e) { return fail("Ce code n’est pas valide. Vérifie que tu l’as collé en entier."); }
+    if (bytes.length !== 74 || bytes[0] !== 1) return fail("Ce code n’est pas valide. Vérifie que tu l’as collé en entier.");
+    var payload = bytes.slice(0, 10), sig = bytes.slice(10);
+    return crypto.subtle.importKey("jwk", CFG.publicKey, { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"])
+      .then(function (key) { return crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, key, sig, payload); })
+      .then(function (ok) {
+        if (!ok) return { err: "Ce code n’est pas valide. Vérifie que tu l’as collé en entier." };
+        var months = payload[1], issued = (payload[2] << 8) | payload[3], nowDays = Math.floor(Date.now() / 864e5);
+        if (nowDays - issued > 30 || issued - nowDays > 1) return { err: "Ce code a expiré. Demande-en un nouveau." };
+        var id = hex(sig.slice(0, 8));
+        if (state.sub && state.sub.used && state.sub.used.indexOf(id) !== -1) return { err: "Ce code a déjà été utilisé." };
+        return phoneHash(state.profile && state.profile.phone).then(function (h) {
+          if (hex(h) !== hex(payload.slice(4, 10))) return { err: "Ce code a été créé pour un autre numéro de téléphone. Vérifie le numéro de ton profil, dans l’onglet Plus." };
+          return { months: months, id: id };
+        });
+      })
+      .catch(function () { return { err: "Ce code n’est pas valide. Vérifie que tu l’as collé en entier." }; });
+  }
+  function activateCode(raw) {
+    return verifyCode(raw).then(function (res) {
+      if (res.err) { setMsg("msg-code", res.err); return; }
+      var base = subActive() ? parseYmd(state.sub.until) : today;
+      var until = addMonths(base, res.months);
+      state.sub = { until: ymd(until), used: ((state.sub && state.sub.used) || []).concat([res.id]) };
+      payOpen = false;
+      save();
+      window.scrollTo(0, 0);
+    });
+  }
+  function payScreen(brand) {
+    var left = trialLeft(), sub = subActive(), access = hasAccess();
+    var title = access ? "S’abonner à NA_DASSI" : "Ton essai gratuit est terminé";
+    var sub1 = access
+      ? (sub ? "Ton abonnement court jusqu’au " + untilFr(state.sub.until) + ". Tu peux le prolonger." : "Il te reste " + left + " jour" + (left > 1 ? "s" : "") + " d’essai gratuit. Tu peux t’abonner dès maintenant.")
+      : "Tes données sont gardées. Abonne-toi pour continuer.";
+    var p = state.profile || {};
+    var wa = CFG.whatsapp ? "https://wa.me/" + String(CFG.whatsapp).replace(/\D/g, "") + "?text=" + encodeURIComponent("Bonjour, j’ai payé mon abonnement NA_DASSI. Mon numéro : " + (p.phone || "") + ". Voici la preuve de paiement :") : "";
+    return '<header class="top">' + brand + '<h1 class="gate-title">' + title + '</h1><p class="gate-sub">' + sub1 + '</p>' +
+      '<ul class="perks"><li>' + money(CFG.priceFcfa) + ' par mois</li><li>Paiement par ' + esc(CFG.payService || "mobile money") + '</li></ul></header>' +
+      '<section class="card"><h2>Comment s’abonner</h2><ol class="steps">' +
+      '<li><div class="st-body"><span>Envoie <b>' + money(CFG.priceFcfa) + '</b>' + (CFG.payService ? " par <b>" + esc(CFG.payService) + "</b>" : "") + ' au numéro :</span><span class="pay-num num" id="pay-num">' + esc(CFG.payNumber) + '</span><div><button class="btn ghost small" type="button" data-act="copy-pay">Copier le numéro</button></div><p class="msg ok" role="status" id="ok-copy"></p></div></li>' +
+      '<li><div class="st-body"><span>Envoie la preuve de paiement et ton numéro de téléphone' + (CFG.whatsapp ? " sur WhatsApp." : " à la personne qui gère NA_DASSI.") + '</span>' + (wa ? '<div><a class="btn small" href="' + wa + '" target="_blank" rel="noopener">Ouvrir WhatsApp</a></div>' : "") + '</div></li>' +
+      '<li><div class="st-body"><span>Tu reçois un code d’activation. Colle-le ici.</span></div></li></ol>' +
+      '<form data-form="code" novalidate><label>Code d’activation<textarea id="code-input" name="code" rows="3" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Colle ton code ici"></textarea></label>' +
+      '<p class="msg" role="alert" id="msg-code"></p><button class="btn big" type="submit">Activer mon abonnement</button>' +
+      (access ? '<button class="btn ghost" type="button" data-act="close-pay">Retour</button>' : "") + '</form></section>';
+  }
+  function billingCard() {
+    if (!billingOn()) return "";
+    var line = subActive()
+      ? "<b>Abonné jusqu’au " + untilFr(state.sub.until) + ".</b>"
+      : "<b>Essai gratuit : " + trialLeft() + " jour" + (trialLeft() > 1 ? "s" : "") + " restant" + (trialLeft() > 1 ? "s" : "") + ".</b>";
+    return '<section class="card"><h2>Mon abonnement</h2><p>' + line + '</p><p class="small muted">' + money(CFG.priceFcfa) + " par mois.</p><div><button class=\"btn small\" data-act=\"open-pay\">" + (subActive() ? "Prolonger" : "M’abonner") + "</button></div></section>";
+  }
+  function billingBanner() {
+    if (!billingOn()) return "";
+    var n = subActive() ? subLeft() : trialLeft();
+    if (n > 5) return "";
+    var txt = subActive() ? "Ton abonnement se termine dans " + n + " jour" + (n > 1 ? "s" : "") + "." : "Il te reste " + n + " jour" + (n > 1 ? "s" : "") + " d’essai gratuit.";
+    return '<div class="notice"><p><b>' + txt + '</b></p><div><button class="btn small" data-act="open-pay">' + (subActive() ? "Prolonger" : "M’abonner") + "</button></div></div>";
+  }
+
+  /* ---------- page d'accueil et inscription ---------- */
+  function renderGate() {
+    var g = $("#gate");
+    var brand = '<div class="brand logo">NA_DASSI</div>';
+    if (state.profile && !editingProfile) { g.innerHTML = payScreen(brand); return; }
+    if (gateStep === "welcome" && !editingProfile) {
+      g.innerHTML =
+        '<header class="top">' + brand +
+        '<h1 class="gate-title">Bienvenue dans un monde où c’est vous qui avez le pouvoir de contrôler votre <span class="logo">NA_DASSI</span></h1>' +
+        '<p class="gate-sub">Réponds à une question simple chaque mois : où va mon argent ?</p>' +
+        '<ul class="perks"><li>Répartis ton revenu, par mois ou par semaine</li><li>Reçois des rappels pour ton loyer et tes factures</li><li>Mets de côté pour tes projets, un objectif à la fois</li></ul>' +
+        '<button class="btn big" style="background:var(--strip);color:var(--strip-ink)" data-act="start">Commencer</button></header>';
+      return;
+    }
+    var p = state.profile || {};
+    g.innerHTML =
+      '<header class="top">' + brand + '<h1 class="gate-title">' + (editingProfile ? "Modifier mes informations" : "Crée ton espace") + '</h1>' +
+      '<p class="gate-sub">' + (editingProfile ? "Change ce que tu veux, puis enregistre." : "Quelques informations pour te connaître. Ça prend une minute.") + '</p></header>' +
+      '<section class="card"><form data-form="profile" novalidate>' +
+      '<div class="grid2"><label>Prénom<input id="pf-first" name="first" type="text" maxlength="40" autocomplete="given-name" value="' + esc(p.first || "") + '"></label>' +
+      '<label>Nom<input id="pf-last" name="last" type="text" maxlength="40" autocomplete="family-name" value="' + esc(p.last || "") + '"></label></div>' +
+      '<label>Numéro de téléphone<input id="pf-phone" name="phone" type="tel" inputmode="tel" maxlength="20" autocomplete="tel" placeholder="07 00 00 00 00" value="' + esc(p.phone || "") + '"></label>' +
+      '<label>E-mail (facultatif)<input id="pf-email" name="email" type="email" inputmode="email" maxlength="80" autocomplete="email" placeholder="prenom@exemple.com" value="' + esc(p.email || "") + '"></label>' +
+      '<p class="small muted">Ces informations restent sur ton téléphone. Elles ne sont envoyées à personne.</p>' +
+      '<p class="msg" role="alert" id="msg-profile"></p>' +
+      '<button class="btn big" type="submit">' + (editingProfile ? "Enregistrer" : "Entrer dans l’application") + '</button>' +
+      (editingProfile ? '<button class="btn ghost" type="button" data-act="cancel-profile">Annuler</button>' : '<button class="btn ghost" type="button" data-act="back-welcome">Retour</button>') +
+      '</form></section>';
+  }
+  function validateProfile(fd) {
+    var first = String(fd.get("first") || "").trim(), last = String(fd.get("last") || "").trim();
+    var phone = String(fd.get("phone") || "").trim(), email = String(fd.get("email") || "").trim();
+    if (!first) return { err: "Écris ton prénom." };
+    if (!last) return { err: "Écris ton nom." };
+    var digits = phone.replace(/\D/g, "");
+    if (digits.indexOf("00225") === 0) digits = digits.slice(5);
+    else if (digits.indexOf("225") === 0 && digits.length > 10) digits = digits.slice(3);
+    if (digits.length < 8 || digits.length > 15) return { err: "Le numéro de téléphone n’est pas valide. Exemple : 07 00 00 00 00." };
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return { err: "L’adresse e-mail n’est pas valide. Exemple : prenom@exemple.com, ou laisse la case vide." };
+    return { profile: { first: first, last: last, phone: phone, email: email } };
+  }
+
+  function expenseForm() {
+    return '<form data-form="exp" novalidate>' +
+      '<div class="grid2"><label>Montant (FCFA)<input id="exp-amount" name="amount" type="number" inputmode="numeric" min="1" step="1" placeholder="5000"></label>' +
+      '<label>Catégorie<select id="exp-cat" name="cat">' + catOptions("alim") + "</select></label></div>" +
+      '<label>Pour quoi ?<input id="exp-label" name="label" type="text" maxlength="60" placeholder="Ex. Courses, taxi, crédit téléphone" autocomplete="off"></label>' +
+      '<p class="msg" role="alert" id="msg-exp"></p><p class="msg ok" role="status" id="ok-exp"></p><button class="btn big" type="submit">Ajouter la dépense</button></form>';
+  }
+
+  function viewApercu() {
+    var gs = groupSpent();
+    var inc = monthlyIncome();
+    var sp = state.split;
+    var alerts = ["besoins", "envies"].filter(function (g) { return gs[g] > budgetOf(g) && (budgetOf(g) > 0 || gs[g] > 0); }).map(function (g) {
+      return '<div class="alert"><b>' + GROUPS[g].label + "</b> : " + money(gs[g] - budgetOf(g)) + " au-dessus de ton budget.</div>";
+    }).join("");
+    var posts = ["besoins", "envies", "epargne"].map(function (g) {
+      var b = budgetOf(g), s = gs[g];
+      var pct = b > 0 ? Math.min(100, s / b * 100) : (s > 0 ? 100 : 0);
+      var over = g !== "epargne" && s > b;
+      var line = g === "epargne"
+        ? money(s) + " mis de côté sur " + money(b) + " prévus"
+        : money(s) + " dépensés sur " + money(b) + (over ? "" : " (reste " + money(b - s) + ")");
+      return '<div class="post"><div class="post-top"><b><span class="dot" style="background:' + GROUPS[g].color + '"></span>' + GROUPS[g].label + " " + (sp[g] || 0) + ' %</b><span class="small muted num">' + money(b) + '</span></div><div class="bar' + (over ? " over" : "") + '" style="--c:' + GROUPS[g].color + '"><span style="width:' + pct.toFixed(1) + '%"></span></div><p class="small muted">' + line + "</p></div>";
+    }).join("");
+    var splitBar = ["besoins", "envies", "epargne"].map(function (g) { return '<i style="width:' + (sp[g] || 0) + "%;background:" + GROUPS[g].color + '"></i>'; }).join("");
+    var ups = state.dues.map(function (d) { return { d: d, i: dueInfo(d) }; }).filter(function (x) { return !x.i.paid; }).sort(function (a, b) { return a.i.diff - b.i.diff; }).slice(0, 3);
+    var upHtml = ups.length
+      ? '<ul class="list">' + ups.map(function (x) {
+        return '<li class="item"><div class="item-main"><b>' + esc(x.d.label) + '</b><span class="small muted">Le ' + x.d.day + " du mois</span></div><div class=\"item-side\"><b class=\"num\">" + money(x.d.amount) + "</b>" + duePill(x.i) + "</div></li>";
+      }).join("") + "</ul>"
+      : '<p class="muted">Rien à payer pour le moment.</p>';
+    return (
+      billingBanner() +
+      (inc <= 0 ? '<div class="notice"><p><b>Commence par ton revenu.</b> Il sert à calculer ta répartition et ton budget de la semaine.</p><div><button class="btn small" data-tab="plus">Entrer mon revenu</button></div></div>' : "") +
+      '<section class="card"><h2>Dépense rapide</h2>' + expenseForm() + "</section>" +
+      alerts + catAlerts() +
+      (inc > 0 ? weekCard() : "") +
+      '<section class="card"><div class="card-head"><h2>Ta répartition</h2><span class="small muted">' + sp.besoins + " / " + sp.envies + " / " + sp.epargne + "</span></div><div class=\"split\">" + splitBar + "</div>" + posts + "</section>" +
+      '<section class="card"><div class="card-head"><h2>À payer bientôt</h2><button class="btn ghost small" data-tab="echeances">Tout voir</button></div>' + upHtml + "</section>"
+    );
+  }
+
+  function viewDepenses() {
+    var list = monthExpenses().slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+    var total = list.reduce(function (a, e) { return a + e.amount; }, 0);
+    var rows = list.length
+      ? '<ul class="list">' + list.map(function (e) {
+        return '<li class="item"><div class="item-main"><b>' + esc(e.label) + '</b><span class="small muted">' + dateFr(e.date) + " · " + esc((CATS[e.cat] || { label: "Autre" }).label) + '</span></div><div class="item-side"><b class="num">' + money(e.amount) + '</b><button class="btn danger small" data-act="del-exp" data-id="' + e.id + '" aria-label="Supprimer ' + esc(e.label) + '">Retirer</button></div></li>';
+      }).join("") + "</ul>"
+      : '<p class="muted">Aucune dépense ce mois-ci. Ajoute la première ci-dessus.</p>';
+    return (
+      catAlerts() + '<section class="card"><h2>Noter une dépense</h2>' + expenseForm() + "</section>" +
+      '<section class="card"><div class="card-head"><h2>Ce mois-ci</h2><b class="num">' + money(total) + "</b></div>" + rows + "</section>"
+    );
+  }
+
+  function viewEcheances() {
+    var items = state.dues.map(function (d) { return { d: d, i: dueInfo(d) }; }).sort(function (a, b) { return a.i.dt - b.i.dt; });
+    var rest = items.filter(function (x) { return !x.i.paid; }).reduce(function (a, x) { return a + x.d.amount; }, 0);
+    var rows = items.length
+      ? '<ul class="list">' + items.map(function (x) {
+        return '<li class="item"><div class="item-main"><b>' + esc(x.d.label) + '</b><span class="small muted num">Le ' + x.d.day + " de chaque mois · " + money(x.d.amount) + "</span>" + "</div><div class=\"item-side\">" + duePill(x.i) +
+          '<button class="btn small ' + (x.i.paid ? "ghost" : "") + '" data-act="pay" data-id="' + x.d.id + '">' + (x.i.paid ? "Annuler" : "Marquer payé") + "</button>" +
+          '<button class="btn danger small" data-act="del-due" data-id="' + x.d.id + '" aria-label="Supprimer ' + esc(x.d.label) + '">Retirer</button></div></li>';
+      }).join("") + "</ul>"
+      : '<p class="muted">Aucune échéance. Ajoute ton loyer ou une facture ci-dessous.</p>';
+    return (
+      '<section class="card"><div class="card-head"><h2>Agenda des paiements</h2><span class="small muted">Reste à payer : <b class="num">' + money(rest) + '</b></span></div><div><button class="btn ghost small" data-act="bell">Mes rappels</button></div>' + rows + "</section>" +
+      '<section class="card"><h2>Ajouter une échéance</h2><form data-form="due" novalidate>' +
+      '<label>Nom<input id="due-label" name="label" type="text" maxlength="60" placeholder="Ex. Loyer, CIE, tontine" autocomplete="off"></label>' +
+      '<div class="grid3"><label>Montant<input id="due-amount" name="amount" type="number" inputmode="numeric" min="1" step="1" placeholder="15000"></label>' +
+      '<label>Jour du mois<input id="due-day" name="day" type="number" inputmode="numeric" min="1" max="31" placeholder="5"></label>' +
+      '<label>Catégorie<select id="due-cat" name="cat">' + catOptions("factures") + "</select></label></div>" +
+      '<p class="msg" role="alert" id="msg-due"></p><button class="btn" type="submit">Ajouter à l’agenda</button></form></section>'
+    );
+  }
+
+  function monthsLeft(dateStr) {
+    var p = dateStr.split("-").map(Number);
+    var target = new Date(p[0], p[1] - 1, p[2]);
+    return Math.max(1, Math.ceil((target - today) / 864e5 / 30.4));
+  }
+  function viewEpargne() {
+    var rows = state.goals.length
+      ? state.goals.map(function (g) {
+        var pct = g.target > 0 ? Math.min(100, g.saved / g.target * 100) : 0;
+        var left = Math.max(0, g.target - g.saved);
+        var done = left === 0;
+        var months = monthsLeft(g.date);
+        var per = Math.ceil(left / months / 100) * 100;
+        var info = done ? "Objectif atteint, bravo." : "Pour y arriver d’ici le " + dateFr(g.date) + " : <b>" + money(per) + "</b> à mettre de côté chaque mois.";
+        return '<section class="card"><div class="card-head"><h3>' + esc(g.label) + '</h3><span class="small muted num">' + money(g.saved) + " / " + money(g.target) + "</span></div>" +
+          '<div class="bar" style="--c:var(--c-epargne)"><span style="width:' + pct.toFixed(1) + '%"></span></div><p class="small">' + info + "</p>" +
+          '<div class="row-inline"><input id="c-' + g.id + '" type="number" inputmode="numeric" min="1" step="1" placeholder="Montant à ajouter" aria-label="Montant à ajouter pour ' + esc(g.label) + '"><button class="btn small" data-act="contrib" data-id="' + g.id + '">Ajouter</button><button class="btn danger small" data-act="del-goal" data-id="' + g.id + '">Retirer</button></div><p class="msg" role="alert" id="msg-' + g.id + '"></p></section>';
+      }).join("")
+      : '<section class="card"><p class="muted">Aucun objectif pour le moment. Crée le premier ci-dessous.</p></section>';
+    return (
+      rows +
+      '<section class="card"><h2>Nouvel objectif</h2><form data-form="goal" novalidate>' +
+      '<label>Ce que tu veux financer<input id="goal-label" name="label" type="text" maxlength="60" placeholder="Ex. Voyage, urgence, moto" autocomplete="off"></label>' +
+      '<div class="grid3"><label>Montant visé<input id="goal-target" name="target" type="number" inputmode="numeric" min="1" step="1" placeholder="200000"></label>' +
+      '<label>Déjà de côté<input id="goal-saved" name="saved" type="number" inputmode="numeric" min="0" step="1" placeholder="0"></label>' +
+      '<label>Pour le<input id="goal-date" name="date" type="date" min="' + ymd(today) + '"></label></div>' +
+      '<p class="msg" role="alert" id="msg-goal"></p><button class="btn" type="submit">Créer l’objectif</button></form></section>'
+    );
+  }
+
+  /* ---------- bilan et réglages ---------- */
+  function monthStats(ym) {
+    var sp = 0, sv = 0;
+    state.expenses.forEach(function (e) {
+      if (e.date.slice(0, 7) !== ym) return;
+      if (e.cat === "epargne") sv += e.amount; else sp += e.amount;
+    });
+    return { spent: sp, saved: sv };
+  }
+  function lastMonths(n) {
+    var out = [], d = new Date(today.getFullYear(), today.getMonth(), 1);
+    for (var i = 0; i < n; i++) {
+      out.push(d.getFullYear() + "-" + pad(d.getMonth() + 1));
+      d = new Date(d.getFullYear(), d.getMonth() - 1, 1);
+    }
+    return out;
+  }
+  function viewBilan() {
+    var rows = lastMonths(6).map(function (m) { return { m: m, s: monthStats(m) }; });
+    var max = rows.reduce(function (a, r) { return Math.max(a, r.s.spent); }, 1);
+    var budget = monthlyIncome() * ((state.split.besoins || 0) + (state.split.envies || 0)) / 100;
+    var totalSaved = rows.reduce(function (a, r) { return a + r.s.saved; }, 0);
+    var streak = 0, i = rows[0].s.saved > 0 ? 0 : 1;
+    while (i < rows.length && rows[i].s.saved > 0) { streak++; i++; }
+    var html = rows.map(function (r) {
+      var p = r.m.split("-").map(Number);
+      var name = new Date(p[0], p[1] - 1, 1).toLocaleDateString("fr-FR", { month: "long" });
+      var over = budget > 0 && r.s.spent > budget;
+      var status = r.s.spent === 0 && r.s.saved === 0 ? "Rien noté" : (budget > 0 ? (over ? "au-dessus du budget" : "dans le budget") : "");
+      return '<div class="mrow"><div class="mrow-top"><b>' + esc(name) + '</b><span class="small muted">' + status + '</span></div>' +
+        '<div class="bar' + (over ? " over" : "") + '" style="--c:var(--c-besoins)"><span style="width:' + (r.s.spent / max * 100).toFixed(1) + '%"></span></div>' +
+        '<p class="small muted num" style="white-space:normal">Dépensé ' + money(r.s.spent) + " · Mis de côté " + money(r.s.saved) + "</p></div>";
+    }).join("");
+    return '<section class="card"><div class="card-head"><h2>Bilan des mois</h2><span class="small muted">6 derniers mois</span></div>' +
+      '<div class="streak">' + (streak > 0 ? "<b>" + streak + " mois d’épargne d’affilée.</b> " : "<b>Pas encore de série.</b> ") + "Total mis de côté sur 6 mois : <b>" + money(totalSaved) + "</b>." +
+      (streak === 0 ? " Mets de l’argent de côté ce mois-ci pour la lancer." : "") + "</div>" + html + "</section>";
+  }
+
+  function isStandalone() {
+    try { return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true; } catch (e) { return false; }
+  }
+  function viewPlus() {
+    var inc = monthlyIncome(), sp = state.split;
+    var sum = (sp.besoins || 0) + (sp.envies || 0) + (sp.epargne || 0);
+    var th = state.theme || "auto";
+    var themeBtns = [["auto", "Auto"], ["light", "Clair"], ["dark", "Sombre"]].map(function (x) {
+      return '<button class="btn small ' + (th === x[0] ? "" : "ghost") + '" data-act="theme" data-id="' + x[0] + '" aria-pressed="' + (th === x[0]) + '">' + x[1] + "</button>";
+    }).join("");
+    var reset = confirmReset
+      ? '<p class="small">Tout effacer ? Tes dépenses, échéances et objectifs seront supprimés.</p><div class="row-inline"><button class="btn danger small" data-act="reset-do">Oui, tout effacer</button><button class="btn ghost small" data-act="reset-no">Annuler</button></div>'
+      : '<button class="btn ghost small" data-act="reset-ask">Tout effacer et recommencer</button>';
+    return (
+      billingCard() +
+      viewBilan() +
+      '<section class="card"><div class="card-head"><h2>Ton revenu</h2></div><form data-form="income" novalidate>' +
+      '<div class="grid2"><label>Je perçois<select id="income-freq" name="freq"><option value="month"' + (state.incomeFreq === "week" ? "" : " selected") + '>Chaque mois</option><option value="week"' + (state.incomeFreq === "week" ? " selected" : "") + '>Chaque semaine</option></select></label>' +
+      '<label>Montant (FCFA)<input id="income" name="income" type="number" inputmode="numeric" min="0" step="1" value="' + (state.income || "") + '" placeholder="Ex. 250000"></label></div>' +
+      (inc > 0 ? '<p class="small muted">' + (state.incomeFreq === "week" ? "Soit environ <b>" + money(inc) + "</b> par mois (52 semaines par an, donc 4,33 semaines par mois). " : "") + "Pour tes besoins et tes envies, vise environ <b>" + money(weeklyAllowance()) + "</b> par semaine.</p>" : "") +
+      '<p class="msg ok" role="status" id="ok-income"></p><button class="btn" type="submit">Enregistrer le revenu</button></form></section>' +
+      '<section class="card"><div class="card-head"><h2>Changer la règle</h2><span class="small muted">Par défaut : 50 / 30 / 20</span></div><form data-form="split" novalidate><div class="grid3">' +
+      '<label>Besoins %<input name="split-besoins" type="number" inputmode="numeric" min="0" max="100" value="' + sp.besoins + '"></label>' +
+      '<label>Envies %<input name="split-envies" type="number" inputmode="numeric" min="0" max="100" value="' + sp.envies + '"></label>' +
+      '<label>Épargne %<input name="split-epargne" type="number" inputmode="numeric" min="0" max="100" value="' + sp.epargne + "\"></label></div><p class=\"small " + (sum === 100 ? "muted" : "") + '" ' + (sum === 100 ? "" : 'style="color:var(--danger)"') + ">" + (sum === 100 ? "Total : 100 %." : "Total : " + sum + " %. Le total doit faire 100 %.") + '</p><p class="msg ok" role="status" id="ok-split"></p><button class="btn" type="submit">Enregistrer la répartition</button></form></section>' +
+      viewBudgets() +
+      (state.profile ? '<section class="card"><div class="card-head"><h2>Mon profil</h2><button class="btn ghost small" data-act="edit-profile">Modifier</button></div><div class="profile-line"><b>' + esc(state.profile.first + " " + state.profile.last) + '</b><span class="small muted">' + esc(state.profile.phone) + '</span>' + (state.profile.email ? '<span class="small muted">' + esc(state.profile.email) + "</span>" : "") + "</div></section>" : "") +
+      (isStandalone() ? "" : '<section class="card"><h2>Installer l’application</h2><p class="small"><b>iPhone</b> : ouvre ce site dans Safari, appuie sur Partager, puis sur « Sur l’écran d’accueil ».</p><p class="small"><b>Android</b> : dans Chrome, appuie sur les trois points, puis sur « Installer l’application ».</p><p class="small muted">Sur iPhone, l’application installée garde ses propres données, séparées de celles de Safari. Installe-la avant de noter tes chiffres.</p></section>') +
+      '<section class="card"><h2>Apparence</h2><div class="seg">' + themeBtns + "</div></section>" +
+      '<section class="card"><h2>Mes données</h2><p class="small muted">Elles restent sur ce téléphone.</p>' + reset + "</section>"
+    );
+  }
+
+  function render() {
+    var gateOn = !state.profile || editingProfile || payOpen || !hasAccess();
+    $("#gate").hidden = !gateOn;
+    $("#app").hidden = gateOn;
+    document.querySelector(".nav").hidden = gateOn;
+    if (gateOn) { applyTheme(); renderGate(); return; }
+    renderHero();
+    var v = tab === "depenses" ? viewDepenses() : tab === "echeances" ? viewEcheances() : tab === "epargne" ? viewEpargne() : tab === "plus" ? viewPlus() : viewApercu();
+    $("#view").innerHTML = (bellOpen ? bellPanel() : "") + v;
+  }
+  function save() { persist(); render(); }
+  function setMsg(id, t) { var el = document.getElementById(id); if (el) el.textContent = t; }
+  function notReady(kind) {
+    var el = kind ? (document.getElementById("ok-" + kind) || document.getElementById("msg-" + kind)) : null;
+    var txt = "Chargement de tes données… réessaie dans un instant.";
+    if (el) { el.textContent = txt; setTimeout(function () { if (el.isConnected && el.textContent === txt) el.textContent = ""; }, 3000); }
+    else $("#mode-note").textContent = txt;
+  }
+  function flashOk(kind, text) {
+    var el = document.getElementById("ok-" + kind);
+    if (!el) return;
+    el.textContent = text;
+    setTimeout(function () { var e2 = document.getElementById("ok-" + kind); if (e2) e2.textContent = ""; }, 3500);
+  }
+
+  /* ---------- events ---------- */
+  document.addEventListener("click", function (ev) {
+    var t = ev.target.closest("[data-tab],[data-act]");
+    if (!t) return;
+    if (t.dataset.tab) { tab = t.dataset.tab; bellOpen = false; render(); window.scrollTo(0, 0); return; }
+    var act = t.dataset.act, id = t.dataset.id;
+    if (!ready && act !== "prev" && act !== "next") { notReady(act === "contrib" ? id : ""); return; }
+    if (act === "bell") {
+      bellOpen = !bellOpen;
+      if (bellOpen) viewMonth = ymd(today).slice(0, 7);
+      render();
+      var bp = document.getElementById("bell-panel");
+      if (bp && bp.scrollIntoView) bp.scrollIntoView({ block: "start" });
+    } else if (act === "ics") {
+      downloadIcs();
+    } else if (act === "prev" || act === "next") {
+      bellOpen = false;
+      var p = viewMonth.split("-").map(Number);
+      var d = new Date(p[0], p[1] - 1 + (act === "next" ? 1 : -1), 1);
+      viewMonth = d.getFullYear() + "-" + pad(d.getMonth() + 1);
+      render();
+    } else if (act === "clear-sample") {
+      state = emptyState();
+      tab = "apercu"; save();
+    } else if (act === "open-pay") {
+      payOpen = true; render(); window.scrollTo(0, 0);
+    } else if (act === "close-pay") {
+      payOpen = false; render(); window.scrollTo(0, 0);
+    } else if (act === "copy-pay") {
+      var okc = function (m) { flashOk("copy", m); };
+      try { navigator.clipboard.writeText(String(CFG.payNumber)).then(function () { okc("Numéro copié."); }, function () { okc("Copie le numéro à la main."); }); } catch (e) { okc("Copie le numéro à la main."); }
+    } else if (act === "start") {
+      gateStep = "signup"; render(); window.scrollTo(0, 0);
+    } else if (act === "back-welcome") {
+      gateStep = "welcome"; render(); window.scrollTo(0, 0);
+    } else if (act === "edit-profile") {
+      editingProfile = true; render(); window.scrollTo(0, 0);
+    } else if (act === "cancel-profile") {
+      editingProfile = false; render(); window.scrollTo(0, 0);
+    } else if (act === "theme") {
+      state.theme = id; save();
+    } else if (act === "reset-ask") {
+      confirmReset = true; render();
+    } else if (act === "reset-no") {
+      confirmReset = false; render();
+    } else if (act === "reset-do") {
+      confirmReset = false; state = emptyState(); tab = "apercu"; save();
+    } else if (act === "del-exp") {
+      var ex = state.expenses.find(function (e) { return e.id === id; });
+      if (ex && ex.goalId) { var g0 = state.goals.find(function (g) { return g.id === ex.goalId; }); if (g0) g0.saved = Math.max(0, g0.saved - ex.amount); }
+      state.expenses = state.expenses.filter(function (e) { return e.id !== id; }); save();
+    } else if (act === "del-due") {
+      state.dues = state.dues.filter(function (d) { return d.id !== id; }); save();
+    } else if (act === "del-goal") {
+      state.goals = state.goals.filter(function (g) { return g.id !== id; }); save();
+    } else if (act === "pay") {
+      var due = state.dues.find(function (d) { return d.id === id; });
+      if (!due) return;
+      var info = dueInfo(due);
+      if (info.paid) {
+        state.expenses = state.expenses.filter(function (e) { return !(e.dueId === id && e.date.slice(0, 7) === viewMonth); });
+      } else {
+        state.expenses.push({ id: uid(), label: due.label, amount: due.amount, cat: due.cat, date: newExpenseDate(), dueId: id });
+      }
+      save();
+    } else if (act === "contrib") {
+      var goal = state.goals.find(function (g) { return g.id === id; });
+      var inp = document.getElementById("c-" + id);
+      var amt = Number(inp && inp.value);
+      if (!goal || !(amt > 0)) { setMsg("msg-" + id, "Entre un montant supérieur à 0."); return; }
+      goal.saved += amt;
+      state.expenses.push({ id: uid(), label: "Épargne : " + goal.label, amount: amt, cat: "epargne", date: newExpenseDate(), goalId: id });
+      save();
+    }
+  });
+
+  document.addEventListener("click", function (ev) {
+    var b = ev.target.closest('button[type="submit"]');
+    if (!b) return;
+    var f = b.closest("form[data-form]");
+    if (!f) return;
+    ev.preventDefault();
+    handleForm(f);
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key !== "Enter") return;
+    var i = ev.target.closest && ev.target.closest("input");
+    var f = i && i.closest("form[data-form]");
+    if (!f) return;
+    ev.preventDefault();
+    handleForm(f);
+  });
+  document.addEventListener("submit", function (ev) {
+    var f = ev.target.closest("form[data-form]");
+    if (!f) return;
+    ev.preventDefault();
+    handleForm(f);
+  });
+  function handleForm(f) {
+    try { handleFormInner(f); } catch (e) {
+      var k = f.dataset.form;
+      var el = document.getElementById("ok-" + k) || document.getElementById("msg-" + k);
+      if (el) el.textContent = "Erreur : " + ((e && e.message) || e);
+    }
+  }
+  function handleFormInner(f) {
+    var kind = f.dataset.form, fd = new FormData(f);
+    if (!ready) { notReady(kind); return; }
+    var label = String(fd.get("label") || "").trim();
+    if (kind === "code") {
+      setMsg("msg-code", "Vérification…");
+      activateCode(fd.get("code"));
+      return;
+    }
+    if (kind === "profile") {
+      var v = validateProfile(fd);
+      if (v.err) return setMsg("msg-profile", v.err);
+      state.profile = v.profile;
+      if (!state.trialStart) state.trialStart = ymd(today);
+      editingProfile = false;
+      tab = "apercu";
+      save();
+      window.scrollTo(0, 0);
+      return;
+    }
+    if (kind === "income") {
+      state.income = Math.max(0, Number(fd.get("income")) || 0);
+      state.incomeFreq = fd.get("freq") === "week" ? "week" : "month";
+      save();
+      return flashOk("income", "Revenu enregistré.");
+    }
+    if (kind === "budgets") {
+      state.catBudgets = state.catBudgets || {};
+      Object.keys(CATS).forEach(function (k) { if (fd.has("cb-" + k)) state.catBudgets[k] = Math.max(0, Number(fd.get("cb-" + k)) || 0); });
+      save();
+      return flashOk("budgets", "Budgets enregistrés.");
+    }
+    if (kind === "split") {
+      ["besoins", "envies", "epargne"].forEach(function (g) { state.split[g] = Math.min(100, Math.max(0, Number(fd.get("split-" + g)) || 0)); });
+      save();
+      return flashOk("split", "Répartition enregistrée.");
+    }
+    if (kind === "exp") {
+      var a = Number(fd.get("amount"));
+      if (!label) return setMsg("msg-exp", "Dis pour quoi est cette dépense.");
+      if (!(a > 0)) return setMsg("msg-exp", "Entre un montant supérieur à 0.");
+      state.expenses.push({ id: uid(), label: label, amount: a, cat: String(fd.get("cat")), date: newExpenseDate() });
+      save();
+      flashOk("exp", "Dépense ajoutée.");
+    } else if (kind === "due") {
+      var da = Number(fd.get("amount")), dd = Math.floor(Number(fd.get("day")));
+      if (!label) return setMsg("msg-due", "Donne un nom à cette échéance.");
+      if (!(da > 0)) return setMsg("msg-due", "Entre un montant supérieur à 0.");
+      if (!(dd >= 1 && dd <= 31)) return setMsg("msg-due", "Le jour doit être entre 1 et 31.");
+      state.dues.push({ id: uid(), label: label, amount: da, day: dd, cat: String(fd.get("cat")) });
+      save();
+    } else if (kind === "goal") {
+      var tg = Number(fd.get("target")), sv = Number(fd.get("saved") || 0), dt = String(fd.get("date") || "");
+      if (!label) return setMsg("msg-goal", "Dis ce que tu veux financer.");
+      if (!(tg > 0)) return setMsg("msg-goal", "Entre le montant visé.");
+      if (!dt) return setMsg("msg-goal", "Choisis une date.");
+      state.goals.push({ id: uid(), label: label, target: tg, saved: Math.max(0, sv), date: dt });
+      save();
+    }
+  }
+
+  document.addEventListener("change", function (ev) {
+    var t = ev.target.closest("[data-field]");
+    if (!t) return;
+    var v = Math.max(0, Number(t.value) || 0);
+    if (t.dataset.field === "income") state.income = v;
+    else if (t.dataset.field.indexOf("split-") === 0) state.split[t.dataset.field.slice(6)] = Math.min(100, v);
+    else if (t.dataset.field.indexOf("cb-") === 0) { state.catBudgets = state.catBudgets || {}; state.catBudgets[t.dataset.field.slice(3)] = v; }
+    save();
+  });
+
+  /* ---------- start ---------- */
+  try {
+    var raw = localStorage.getItem(LS);
+    if (raw) {
+      var l = JSON.parse(raw);
+      if (l && l.v === 1) { state = l; if (!state.catBudgets) state.catBudgets = {}; }
+    }
+  } catch (e) {}
+  if (state.profile && !state.trialStart) { state.trialStart = ymd(today); persist(); }
+  render();
+  modeNote();
+})();
+
+if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
+  });
+}
+</script>
+
+</body>
+</html>
