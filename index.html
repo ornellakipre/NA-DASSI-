@@ -1266,7 +1266,7 @@ textarea { font: inherit; font-size: 16px; color: var(--ink); background: var(--
   try {
     var raw = localStorage.getItem(LS);
     if (raw) {
-      var l = JSON.parse(raw);
+      var l = JSON.parse(Iui raw);
       if (l && l.v === 1) { state = l; if (!state.catBudgets) state.catBudgets = {}; }
     }
   } catch (e) {}
@@ -1288,6 +1288,9 @@ if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
   });
 }
 </script>
+<footer style="text-align:center; padding:20px; color:gray;">
+  © 2026 NA DASSI · Créé par Kipré Marie-Ornella Peace Zoukou · Tous droits réservés
+</footer>
 
 </body>
 </html>
